@@ -49,20 +49,20 @@ const router = createRouter({
 
 
 //路由守卫
-// router.beforeEach((to, from, next) => {
-//   const token = localStorage.getItem('token')
-//   if (to.path !== '/login' && !token) {
-//     console.log('1')
-//     next('/login');
-//   } else {
-//     console.log('2')
-//     if (to.name === 'Login' && token) {
-//       router.push('/')
-//     } else {
-//       next();
-//     }
-//   }
-// });
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token')
+  if (to.path !== '/login' && !token) {
+    console.log('1')
+    next('/login');
+  } else {
+    console.log('2')
+    if (to.name === 'Login' && token) {
+      router.push('/')
+    } else {
+      next();
+    }
+  }
+});
 
 
 export default router
