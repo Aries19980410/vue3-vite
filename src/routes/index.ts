@@ -1,28 +1,20 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import Layout from '../layout/index.vue';
 const routes = [
   {
-    path: '/',
-    redirect: '/index'
+    path: '/redirect',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/redirect/:path(.*)',
+        component: () => import('../views/redirect.vue')
+      }
+    ]
   },
   {
     path: '/:catchAll(.*)',
     redirect: '/404'
-  },
-  {
-    path: '/index',
-    name: 'Index',
-    component: () => import('../views/index.vue'),
-    meta: {
-      title: '首页'
-    },
-  },
-  {
-    path: '/user',
-    name: "User",
-    component: () => import('../views/user.vue'),
-    meta: {
-      title: '用户'
-    }
   },
   {
     path: '/404',
@@ -34,12 +26,37 @@ const routes = [
   },
   {
     path: '/login',
-    name: 'Login',
-    component: () => import('../views/login.vue'),
-    meta: {
-      title: '首页'
-    },
+    name: 'login',
+    component: () => import('../views/login.vue')
   },
+  {
+    path: '',
+    component: Layout,
+    redirect: 'index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('../views/index.vue'),
+        name: 'Index',
+        meta: { title: '首页' }
+      }
+    ]
+  },
+  {
+    path: '/user',
+    component: Layout,
+    hidden: true,
+    redirect: 'noredirect',
+    children: [
+      {
+        path: 'profile',
+        component: () => import('../views/system/user/index.vue'),
+        name: 'Profile',
+        meta: { title: '个人中心', icon: 'user' }
+      }
+    ]
+  },
+
 ]
 
 const router = createRouter({
@@ -52,10 +69,8 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
   if (to.path !== '/login' && !token) {
-    console.log('1')
     next('/login');
   } else {
-    console.log('2')
     if (to.name === 'Login' && token) {
       router.push('/')
     } else {
